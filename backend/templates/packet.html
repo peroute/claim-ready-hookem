@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Claim Packet — {{ packet.claim_id }}</title>
+  <style>
+    /* ---------- Reset / base ---------- */
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11pt;
+      color: #1a202c;
+      line-height: 1.55;
+    }
+    h1, h2, h3, h4, .sans {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #1a365d;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      font-size: 18pt;
+      margin: 0 0 18px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #1a365d;
+    }
+    h3 { font-size: 13pt; margin: 14px 0 6px 0; }
+    p  { margin: 0 0 10px 0; }
+
+    .page-break    { page-break-before: always; }
+    .no-break      { page-break-inside: avoid; }
+
+    /* ---------- Cover page ---------- */
+    .cover {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 40px;
+    }
+    .cover .banner {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 28pt;
+      font-weight: 700;
+      color: #1a365d;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-top: 4px solid #1a365d;
+      border-bottom: 4px solid #1a365d;
+      padding: 24px 36px;
+      margin-bottom: 36px;
+    }
+    .cover .meta-line {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 12pt;
+      color: #4a5568;
+      margin: 6px 0;
+      letter-spacing: 0.05em;
+    }
+    .cover .claimant {
+      font-size: 16pt;
+      margin-top: 30px;
+      color: #1a202c;
+    }
+    .cover .summary-stat {
+      margin-top: 28px;
+      font-size: 14pt;
+      color: #2d3748;
+    }
+    .cover .summary-stat strong {
+      color: #1a365d;
+      font-size: 22pt;
+      display: block;
+      margin-top: 4px;
+    }
+    .cover .timestamp {
+      margin-top: 50px;
+      font-size: 10pt;
+      color: #718096;
+    }
+    .cover .brand-footer {
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+      color: #a0aec0;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Section wrapper ---------- */
+    section.report-section {
+      padding: 30px 0;
+    }
+
+    /* ---------- Incident summary ---------- */
+    .summary-box {
+      border-left: 4px solid #1a365d;
+      background: #f7fafc;
+      padding: 14px 18px;
+      margin: 10px 0 20px 0;
+      font-style: italic;
+      color: #2d3748;
+    }
+    table.details {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table.details th, table.details td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 10.5pt;
+    }
+    table.details th {
+      width: 22%;
+      color: #4a5568;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 9pt;
+      background: #f7fafc;
+    }
+
+    /* ---------- FNOL letter ---------- */
+    .fnol-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      font-size: 10.5pt;
+    }
+    .fnol-header .right { text-align: right; color: #4a5568; }
+    .fnol-body { white-space: pre-line; }
+    .signature-block {
+      margin-top: 30px;
+      font-size: 11pt;
+    }
+    .signature-block .sig-line {
+      margin-top: 36px;
+      border-top: 1px solid #2d3748;
+      width: 240px;
+      padding-top: 4px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      color: #4a5568;
+    }
+
+    /* ---------- Inventory table ---------- */
+    table.inventory {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 9.5pt;
+    }
+    table.inventory thead th {
+      background: #1a365d;
+      color: #ffffff;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 8.5pt;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    table.inventory tbody td {
+      padding: 8px;
+      vertical-align: top;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    table.inventory tbody tr:nth-child(even) { background: #f7fafc; }
+    table.inventory tbody tr:nth-child(odd)  { background: #ffffff; }
+    table.inventory tbody tr { page-break-inside: avoid; }
+    .thumb-cell { width: 92px; }
+    .thumb {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border: 1px solid #cbd5e0;
+      border-radius: 2px;
+      display: block;
+    }
+    .thumb-placeholder {
+      width: 80px;
+      height: 60px;
+      background: #edf2f7;
+      border: 1px dashed #cbd5e0;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a0aec0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+    }
+    .item-name {
+      font-weight: 700;
+      color: #1a202c;
+    }
+    .item-name .brand-tag {
+      display: inline-block;
+      margin-left: 4px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      color: #ffffff;
+      background: #2c5282;
+      padding: 1px 5px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+    .category-pill {
+      display: inline-block;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #2d3748;
+      background: #edf2f7;
+      padding: 2px 7px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .col-num   { width: 28px; text-align: center; color: #718096; }
+    .col-cat   { width: 78px; }
+    .col-value { width: 70px; text-align: right; font-variant-numeric: tabular-nums; }
+    .col-proof { width: 50px; text-align: center; }
+    .col-ref   { width: 90px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 8.5pt; color: #2c5282; }
+    .value-missing { color: #a0aec0; font-style: italic; }
+    .check-mark { color: #2f855a; font-weight: 700; font-size: 12pt; }
+
+    .totals-row {
+      margin-top: 14px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      color: #2d3748;
+      display: flex;
+      gap: 24px;
+      justify-content: flex-end;
+      border-top: 2px solid #1a365d;
+      padding-top: 10px;
+    }
+    .totals-row .stat-label { color: #4a5568; text-transform: uppercase; letter-spacing: 0.06em; font-size: 8.5pt; }
+    .totals-row .stat-value { color: #1a365d; font-weight: 700; font-size: 12pt; }
+
+    /* ---------- Policy references ---------- */
+    .policy-citation {
+      margin-bottom: 18px;
+      padding: 12px 16px;
+      background: #f7fafc;
+      border-left: 3px solid #2c5282;
+      page-break-inside: avoid;
+    }
+    .policy-citation .cite-id {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #2c5282;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+    .policy-citation .cite-title {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      color: #1a365d;
+      font-size: 11pt;
+      margin-bottom: 6px;
+    }
+    .policy-citation .cite-text {
+      font-size: 10pt;
+      color: #2d3748;
+      white-space: pre-line;
+    }
+
+    /* ---------- Evidence footer ---------- */
+    .evidence-footer {
+      margin-top: 40px;
+      padding: 16px 20px;
+      background: #edf2f7;
+      border-top: 1px solid #cbd5e0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+      color: #4a5568;
+    }
+    .evidence-footer dt {
+      font-weight: 600;
+      color: #2d3748;
+      display: inline-block;
+      width: 160px;
+    }
+    .evidence-footer dd {
+      display: inline;
+      margin: 0;
+    }
+    .evidence-footer .row { margin: 4px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== COVER PAGE ===================== -->
+  <div class="cover">
+    <div class="banner">Property Damage Claim Packet</div>
+    <div class="meta-line">{{ intake.incident_date }} &nbsp;|&nbsp; Claim ID: {{ packet.claim_id }}</div>
+    <div class="claimant">{{ intake.claimant_name or "Policyholder" }}</div>
+
+    <div class="summary-stat">
+      Items Documented
+      <strong>{{ items|length }}</strong>
+    </div>
+
+    <div class="timestamp">Generated {{ generated_long }}</div>
+
+    <div class="brand-footer">Generated by Claim-ready</div>
+  </div>
+
+  <!-- ===================== INCIDENT SUMMARY ===================== -->
+  <section class="report-section page-break">
+    <h2>Incident Summary</h2>
+    <div class="summary-box">{{ packet.incident_summary }}</div>
+
+    <table class="details">
+      <tr><th>Date</th>     <td>{{ intake.incident_date }}</td></tr>
+      <tr><th>Cause</th>    <td>{{ intake.cause }}</td></tr>
+      <tr><th>Location</th> <td>{{ intake.location }}</td></tr>
+    </table>
+  </section>
+
+  <!-- ===================== FNOL LETTER ===================== -->
+  <section class="report-section page-break">
+    <h2>First Notice of Loss</h2>
+
+    <div class="fnol-header">
+      <div class="left">
+        <strong>To:</strong> Claims Department<br>
+        [Insurance Carrier]
+      </div>
+      <div class="right">
+        {{ generated_long }}<br>
+        Claim ID: {{ packet.claim_id }}
+      </div>
+    </div>
+
+    <div class="fnol-body">{{ packet.fnol_letter }}</div>
+
+    <div class="signature-block">
+      Sincerely,
+      <div class="sig-line">{{ intake.claimant_name or "Policyholder" }}</div>
+    </div>
+  </section>
+
+  <!-- ===================== INVENTORY TABLE ===================== -->
+  <section class="report-section page-break">
+    <h2>Itemized Inventory</h2>
+
+    <table class="inventory">
+      <thead>
+        <tr>
+          <th class="col-num">#</th>
+          <th class="thumb-cell">Photo</th>
+          <th>Item</th>
+          <th class="col-cat">Category</th>
+          <th>Description</th>
+          <th>Damage</th>
+          <th class="col-value">Est. Value</th>
+          <th class="col-proof">Proof</th>
+          <th class="col-ref">Policy Ref</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in items %}
+        <tr>
+          <td class="col-num">{{ loop.index }}</td>
+          <td class="thumb-cell">
+            {% if thumbs.get(it.item_id) %}
+              <img class="thumb" src="{{ thumbs[it.item_id] }}" alt="evidence">
+            {% else %}
+              <div class="thumb-placeholder">no image</div>
+            {% endif %}
+          </td>
+          <td>
+            <span class="item-name">{{ it.name }}</span>
+            {% if it.brand_recognized %}<span class="brand-tag">brand</span>{% endif %}
+          </td>
+          <td class="col-cat"><span class="category-pill">{{ it.category }}</span></td>
+          <td>{{ it.description }}</td>
+          <td>{{ it.damage_observed or "—" }}</td>
+          <td class="col-value">
+            {% if it.estimated_value is none %}
+              <span class="value-missing">—</span>
+            {% else %}
+              ${{ "{:,.2f}".format(it.estimated_value) }}
+            {% endif %}
+          </td>
+          <td class="col-proof">
+            {% if it.proof_attached %}<span class="check-mark">✓</span>{% else %}—{% endif %}
+          </td>
+          <td class="col-ref">
+            {% if it.policy_citations %}
+              {% for sid in it.policy_citations %}§ {{ sid }}{% if not loop.last %}, {% endif %}{% endfor %}
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="totals-row">
+      <div>
+        <div class="stat-label">Items</div>
+        <div class="stat-value">{{ items|length }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Estimated Total</div>
+        <div class="stat-value">
+          {% if packet.total_estimated_value > 0 %}
+            ${{ "{:,.2f}".format(packet.total_estimated_value) }}
+          {% else %}<span class="value-missing">pending review</span>{% endif %}
+        </div>
+      </div>
+      <div>
+        <div class="stat-label">Verified Total</div>
+        <div class="stat-value">
+          {% if packet.verified_value > 0 %}
+            ${{ "{:,.2f}".format(packet.verified_value) }}
+          {% else %}<span class="value-missing">—</span>{% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== POLICY REFERENCES ===================== -->
+  <section class="report-section page-break">
+    <h2>Policy Coverage Referenced</h2>
+
+    {% if cited_sections %}
+      {% for sec in cited_sections %}
+      <div class="policy-citation">
+        <div class="cite-id">§ {{ sec.section_id }}</div>
+        <div class="cite-title">{{ sec.title }}</div>
+        <div class="cite-text">{{ sec.text_excerpt }}{% if sec.truncated %}…{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p><em>No policy sections were cited for the items in this packet.</em></p>
+    {% endif %}
+  </section>
+
+  <!-- ===================== EVIDENCE FOOTER ===================== -->
+  <div class="evidence-footer">
+    <div class="row"><dt>Source video:</dt><dd>{{ video_filename }}</dd></div>
+    <div class="row"><dt>Source policy:</dt><dd>{{ policy_filename }}</dd></div>
+    {% if frame_count is not none %}
+    <div class="row"><dt>Total frames analyzed:</dt><dd>{{ frame_count }}</dd></div>
+    {% endif %}
+    <div class="row"><dt>Report generated:</dt><dd>{{ generated_long }}</dd></div>
+  </div>
+
+</body>
+</html>

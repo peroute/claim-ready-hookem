@@ -1,0 +1,21 @@
+# Cross-cutting ignores. Each package (backend/, frontend/) has its
+# own .gitignore for package-specific paths.
+
+# Python virtualenv at repo root
+.venv/
+venv/
+env/
+
+# Build artifact dump
+.dist/
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Stray Python bytecode
+__pycache__/
+*.pyc
